@@ -11,8 +11,8 @@ type ifScope struct {
 	blockEndLine   int // -1 if AST invalid
 }
 
-func (ic *ifScope) getDepth() int {
-	return ic.depth
+func (is *ifScope) getDepth() int {
+	return is.depth
 }
 
 func newFromIfStmt(fset *token.FileSet, depth int, ifStmt *ast.IfStmt) *ifScope {

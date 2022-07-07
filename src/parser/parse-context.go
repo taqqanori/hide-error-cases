@@ -44,18 +44,25 @@ func (ctx *parseContext) Visit(node ast.Node) ast.Visitor {
 		if !ok {
 			break
 		}
-		if len(castedNode.Results) <= funcScope.errorReturnTypeIndex {
-			// return values and function return types does not match
+		if ifScope.depth <= funcScope.depth {
+			// this if statement is outside of the func
 			break
 		}
-		if exprToIdentName(castedNode.Results[funcScope.errorReturnTypeIndex]) == "nil" {
-			// returning nil for error type, not a error case
+		for _, errorReturnTypeIndex := range funcScope.errorReturnTypeIndices {
+			if len(castedNode.Results) <= errorReturnTypeIndex {
+				// return values and function return types does not match
+				continue
+			}
+			if exprToIdentName(castedNode.Results[errorReturnTypeIndex]) == "nil" {
+				// returning nil for error type, not a error case
+				continue
+			}
+			ctx.result.errorCodeLocations = append(ctx.result.errorCodeLocations, &location{
+				startLine: ifScope.blockStartLine,
+				endLine:   ifScope.blockEndLine,
+			})
 			break
 		}
-		ctx.result.errorCodeLocations = append(ctx.result.errorCodeLocations, &location{
-			startLine: ifScope.blockStartLine,
-			endLine:   ifScope.blockEndLine,
-		})
 	}
 	return ctx
 }

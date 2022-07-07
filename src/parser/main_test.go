@@ -12,7 +12,7 @@ import (
 
 const testInputsDir = "test-inputs"
 
-func TestHoge(t *testing.T) {
+func Test(t *testing.T) {
 	test(t, "general.go", parseResult{
 		status: success,
 		errorCodeLocations: []*location{

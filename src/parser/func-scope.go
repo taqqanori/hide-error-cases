@@ -3,8 +3,8 @@ package main
 import "go/ast"
 
 type funcScope struct {
-	depth                int
-	errorReturnTypeIndex int // -1 if it does not return error
+	depth                  int
+	errorReturnTypeIndices []int // empty if it does not return error
 }
 
 func (fc *funcScope) getDepth() int {
@@ -21,15 +21,15 @@ func newFromFuncLit(depth int, lit *ast.FuncLit) *funcScope {
 
 func newFromFuncType(depth int, funcType *ast.FuncType) *funcScope {
 	ret := &funcScope{
-		depth:                depth,
-		errorReturnTypeIndex: -1,
+		depth:                  depth,
+		errorReturnTypeIndices: []int{},
 	}
 	if funcType == nil || funcType.Results == nil || funcType.Results.List == nil {
 		return ret
 	}
 	for i := 0; i < len(funcType.Results.List); i++ {
 		if exprToIdentName(funcType.Results.List[i].Type) == "error" {
-			ret.errorReturnTypeIndex = i
+			ret.errorReturnTypeIndices = append(ret.errorReturnTypeIndices, i)
 		}
 	}
 	return ret
