@@ -14,8 +14,11 @@ const testInputsDir = "test-inputs"
 
 func Test(t *testing.T) {
 	test(t, "general.go", parseResult{
-		status:             success,
-		errorCodeLocations: []*location{{startLine: 9, endLine: 12}},
+		status: success,
+		errorCodeLocations: []*location{
+			{startLine: 9, endLine: 12},
+			{startLine: 26, endLine: 29},
+		},
 	})
 	test(t, "literals.go", parseResult{
 		status: success,
@@ -49,6 +52,14 @@ func Test(t *testing.T) {
 			{startLine: 14, endLine: 16},
 			{startLine: 18, endLine: 20},
 			{startLine: 22, endLine: 24},
+		},
+	})
+	test(t, "nested.go", parseResult{
+		status: success,
+		errorCodeLocations: []*location{
+			{startLine: 7, endLine: 9},
+			{startLine: 6, endLine: 11},
+			{startLine: 16, endLine: 18},
 		},
 	})
 	test(t, "if-outside-func.go", parseResult{

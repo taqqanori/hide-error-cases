@@ -19,6 +19,23 @@ func General() (int, error) {
 	return 1, nil
 }
 
+func GeneralErrorOnly() error {
+
+	// very general error case
+	err := Error()
+	if err != nil {
+		fmt.Println("error")
+		return err
+	}
+
+	if err != nil {
+		fmt.Println("error")
+		return nil
+	}
+
+	return nil
+}
+
 func Error() error {
 	return nil
 }
