@@ -11,6 +11,11 @@ func General() (int, error) {
 		return -1, err
 	}
 
+	if err != nil {
+		fmt.Println("error")
+		return -1, nil
+	}
+
 	return 1, nil
 }
 

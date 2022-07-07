@@ -41,6 +41,16 @@ func Test(t *testing.T) {
 			},
 		},
 	})
+	test(t, "multiple-errors.go", parseResult{
+		status: success,
+		errorCodeLocations: []*location{
+			{startLine: 6, endLine: 8},
+			{startLine: 10, endLine: 12},
+			{startLine: 14, endLine: 16},
+			{startLine: 18, endLine: 20},
+			{startLine: 22, endLine: 24},
+		},
+	})
 }
 
 func test(t *testing.T, file string, expected parseResult) {
