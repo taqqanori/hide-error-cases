@@ -51,6 +51,10 @@ func Test(t *testing.T) {
 			{startLine: 22, endLine: 24},
 		},
 	})
+	test(t, "if-outside-func.go", parseResult{
+		status:             success,
+		errorCodeLocations: []*location{},
+	})
 }
 
 func test(t *testing.T, file string, expected parseResult) {
