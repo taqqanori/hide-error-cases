@@ -14,31 +14,30 @@ const testInputsDir = "test-inputs"
 
 func Test(t *testing.T) {
 	test(t, "general.go", parseResult{
+		status:             success,
+		errorCodeLocations: []*location{{startLine: 9, endLine: 12}},
+	})
+	test(t, "literals.go", parseResult{
+		status: success,
+		errorCodeLocations: []*location{
+			{startLine: 8, endLine: 10},
+			{startLine: 17, endLine: 19},
+		},
+	})
+	test(t, "named-return-types.go", parseResult{
+		status: success,
+		errorCodeLocations: []*location{
+			{startLine: 7, endLine: 9},
+			{startLine: 14, endLine: 16},
+			{startLine: 23, endLine: 25},
+		},
+	})
+	test(t, "loop.go", parseResult{
 		status: success,
 		errorCodeLocations: []*location{
 			{
-				startLine: 7,
-				endLine:   9,
-			},
-			{
-				startLine: 14,
-				endLine:   16,
-			},
-			{
-				startLine: 23,
-				endLine:   25,
-			},
-			{
-				startLine: 38,
-				endLine:   40,
-			},
-			{
-				startLine: 45,
-				endLine:   47,
-			},
-			{
-				startLine: 54,
-				endLine:   56,
+				startLine: 8,
+				endLine:   11,
 			},
 		},
 	})
