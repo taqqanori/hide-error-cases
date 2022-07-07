@@ -55,12 +55,21 @@ func Test(t *testing.T) {
 		status:             success,
 		errorCodeLocations: []*location{},
 	})
+	parseAndCompare(t, "I am invalid as go code!", parseResult{
+		status:             failure,
+		failureMessage:     "Failed to parse file.",
+		errorCodeLocations: []*location{},
+	})
 }
 
 func test(t *testing.T, file string, expected parseResult) {
 	_, self, _, _ := runtime.Caller(0)
-	content, _ := ioutil.ReadFile(filepath.Join(filepath.Dir(self), testInputsDir, file))
-	assert.JSONEq(t, j(t, expected), j(t, parse(string(content))))
+	src, _ := ioutil.ReadFile(filepath.Join(filepath.Dir(self), testInputsDir, file))
+	parseAndCompare(t, string(src), expected)
+}
+
+func parseAndCompare(t *testing.T, src string, expected parseResult) {
+	assert.JSONEq(t, j(t, expected), j(t, parse(src)))
 }
 
 func j(t *testing.T, o interface{}) string {
