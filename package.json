@@ -1,8 +1,13 @@
 {
-  "name": "hide-error-cases",
+	"name": "hide-error-cases",
 	"displayName": "hide-error-cases",
 	"description": "Hides error case codes of .go file.",
 	"version": "0.0.1",
+	"icon": "image/hiding-gopher.png",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/taqqanori/hide-error-cases.git"
+	},
 	"engines": {
 		"vscode": "^1.68.0"
 	},
@@ -10,20 +15,24 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:hide-error-cases.helloWorld"
+		"onLanguage:go"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "hide-error-cases.helloWorld",
-				"title": "Hello World"
+				"command": "hide-error-cases.foldErrorCases",
+				"title": "Fold Error Cases"
+			},
+			{
+				"command": "hide-error-cases.makeErrorCasesTransparent",
+				"title": "Make Error Cases Transparent"
 			}
 		]
 	},
 	"scripts": {
 		"vscode:prepublish": "yarn run compile",
-		"compile": "tsc -p ./ && cp -rf src/parser out/",
+		"compile": "tsc -p ./ && cp -rf src/parser out/ && rm -rf out/parser/test-inputs out/parser/main_test.go",
 		"watch": "tsc -watch -p ./",
 		"pretest": "yarn run compile && yarn run lint",
 		"lint": "eslint src --ext ts",

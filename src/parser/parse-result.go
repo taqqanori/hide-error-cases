@@ -1,9 +1,9 @@
 package main
 
 type parseResult struct {
-	status             parseStatus
-	failureMessage     string
-	errorCodeLocations []*location
+	Status             parseStatus `json:"status"`
+	FailureMessage     string      `json:"failureMessage"`
+	ErrorCodeLocations []*location `json:"errorCodeLocations"`
 }
 
 type parseStatus string
@@ -14,13 +14,13 @@ const (
 )
 
 type location struct {
-	startLine int
-	endLine   int
+	StartLine int `json:"startLine"`
+	EndLine   int `json:"endLine"`
 }
 
 func newParseResult() *parseResult {
 	return &parseResult{
-		status:             success,
-		errorCodeLocations: []*location{},
+		Status:             success,
+		ErrorCodeLocations: []*location{},
 	}
 }

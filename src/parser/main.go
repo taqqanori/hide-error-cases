@@ -1,14 +1,30 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"io/ioutil"
+	"os"
 )
 
 func main() {
-	fmt.Println("hoge")
+	src, err := ioutil.ReadAll(os.Stdin)
+	if err != nil {
+		errorOut("faild to read stdin.")
+	}
+	json, err := json.Marshal(parse(string(src)))
+	if err != nil {
+		errorOut("failed in json marshaling.")
+		return
+	}
+	fmt.Print(string(json))
+}
+
+func errorOut(msg string) {
+	fmt.Printf(`{status:"failure",failureMessage:"%s"}`, msg)
 }
 
 func parse(src string) *parseResult {
@@ -16,8 +32,8 @@ func parse(src string) *parseResult {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, "", src, 0)
 	if err != nil {
-		ret.status = failure
-		ret.failureMessage = "Failed to parse file."
+		ret.Status = failure
+		ret.FailureMessage = "Failed to parse file."
 		return ret
 	}
 

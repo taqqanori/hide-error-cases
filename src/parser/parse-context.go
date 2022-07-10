@@ -14,7 +14,7 @@ type parseContext struct {
 }
 
 func (ctx *parseContext) Visit(node ast.Node) ast.Visitor {
-	if ctx.result.status == failure {
+	if ctx.result.Status == failure {
 		return nil
 	}
 	if node == nil {
@@ -57,9 +57,9 @@ func (ctx *parseContext) Visit(node ast.Node) ast.Visitor {
 				// returning nil for error type, not a error case
 				continue
 			}
-			ctx.result.errorCodeLocations = append(ctx.result.errorCodeLocations, &location{
-				startLine: ifScope.blockStartLine,
-				endLine:   ifScope.blockEndLine,
+			ctx.result.ErrorCodeLocations = append(ctx.result.ErrorCodeLocations, &location{
+				StartLine: ifScope.blockStartLine,
+				EndLine:   ifScope.blockEndLine,
 			})
 			break
 		}

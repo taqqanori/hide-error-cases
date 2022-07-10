@@ -14,62 +14,62 @@ const testInputsDir = "test-inputs"
 
 func Test(t *testing.T) {
 	test(t, "general.go", parseResult{
-		status: success,
-		errorCodeLocations: []*location{
-			{startLine: 9, endLine: 12},
-			{startLine: 26, endLine: 29},
+		Status: success,
+		ErrorCodeLocations: []*location{
+			{StartLine: 9, EndLine: 12},
+			{StartLine: 26, EndLine: 29},
 		},
 	})
 	test(t, "literals.go", parseResult{
-		status: success,
-		errorCodeLocations: []*location{
-			{startLine: 8, endLine: 10},
-			{startLine: 17, endLine: 19},
+		Status: success,
+		ErrorCodeLocations: []*location{
+			{StartLine: 8, EndLine: 10},
+			{StartLine: 17, EndLine: 19},
 		},
 	})
 	test(t, "named-return-types.go", parseResult{
-		status: success,
-		errorCodeLocations: []*location{
-			{startLine: 7, endLine: 9},
-			{startLine: 14, endLine: 16},
-			{startLine: 23, endLine: 25},
+		Status: success,
+		ErrorCodeLocations: []*location{
+			{StartLine: 7, EndLine: 9},
+			{StartLine: 14, EndLine: 16},
+			{StartLine: 23, EndLine: 25},
 		},
 	})
 	test(t, "loop.go", parseResult{
-		status: success,
-		errorCodeLocations: []*location{
+		Status: success,
+		ErrorCodeLocations: []*location{
 			{
-				startLine: 8,
-				endLine:   11,
+				StartLine: 8,
+				EndLine:   11,
 			},
 		},
 	})
 	test(t, "multiple-errors.go", parseResult{
-		status: success,
-		errorCodeLocations: []*location{
-			{startLine: 6, endLine: 8},
-			{startLine: 10, endLine: 12},
-			{startLine: 14, endLine: 16},
-			{startLine: 18, endLine: 20},
-			{startLine: 22, endLine: 24},
+		Status: success,
+		ErrorCodeLocations: []*location{
+			{StartLine: 6, EndLine: 8},
+			{StartLine: 10, EndLine: 12},
+			{StartLine: 14, EndLine: 16},
+			{StartLine: 18, EndLine: 20},
+			{StartLine: 22, EndLine: 24},
 		},
 	})
 	test(t, "nested.go", parseResult{
-		status: success,
-		errorCodeLocations: []*location{
-			{startLine: 7, endLine: 9},
-			{startLine: 6, endLine: 11},
-			{startLine: 16, endLine: 18},
+		Status: success,
+		ErrorCodeLocations: []*location{
+			{StartLine: 7, EndLine: 9},
+			{StartLine: 6, EndLine: 11},
+			{StartLine: 16, EndLine: 18},
 		},
 	})
 	test(t, "if-outside-func.go", parseResult{
-		status:             success,
-		errorCodeLocations: []*location{},
+		Status:             success,
+		ErrorCodeLocations: []*location{},
 	})
 	parseAndCompare(t, "I am invalid as go code!", parseResult{
-		status:             failure,
-		failureMessage:     "Failed to parse file.",
-		errorCodeLocations: []*location{},
+		Status:             failure,
+		FailureMessage:     "Failed to parse file.",
+		ErrorCodeLocations: []*location{},
 	})
 }
 
