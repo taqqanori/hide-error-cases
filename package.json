@@ -27,6 +27,10 @@
 			{
 				"command": "hide-error-cases.makeErrorCasesTransparent",
 				"title": "Make Error Cases Transparent"
+			},
+			{
+				"command": "hide-error-cases.resetErrorCasesTransparency",
+				"title": "Reset Error Cases Transparency"
 			}
 		]
 	},

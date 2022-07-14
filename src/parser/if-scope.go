@@ -6,9 +6,9 @@ import (
 )
 
 type ifScope struct {
-	depth          int
-	blockStartLine int // -1 if AST invalid
-	blockEndLine   int // -1 if AST invalid
+	depth int
+	start *position // nil if AST invalid
+	end   *position // nil1 if AST invalid
 }
 
 func (is *ifScope) getDepth() int {
@@ -17,15 +17,21 @@ func (is *ifScope) getDepth() int {
 
 func newFromIfStmt(fset *token.FileSet, depth int, ifStmt *ast.IfStmt) *ifScope {
 	ret := &ifScope{
-		depth:          depth,
-		blockStartLine: -1,
-		blockEndLine:   -1,
+		depth: depth,
 	}
 	if ifStmt.Body == nil {
 		return ret
 	}
 	ff := fset.File(ifStmt.Pos())
-	ret.blockStartLine = ff.Line(ifStmt.Body.Lbrace)
-	ret.blockEndLine = ff.Line(ifStmt.Body.Rbrace)
+	start := ff.Position(ifStmt.If)
+	end := ff.Position(ifStmt.Body.Rbrace)
+	ret.start = &position{
+		Line:   start.Line,
+		Column: start.Column,
+	}
+	ret.end = &position{
+		Line:   end.Line,
+		Column: end.Column,
+	}
 	return ret
 }

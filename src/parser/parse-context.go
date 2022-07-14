@@ -36,7 +36,7 @@ func (ctx *parseContext) Visit(node ast.Node) ast.Visitor {
 		if !ok {
 			break
 		}
-		if ifScope == nil || ifScope.blockStartLine < 0 || ifScope.blockEndLine < 0 {
+		if ifScope == nil || ifScope.start == nil || ifScope.end == nil {
 			// broken if statement
 			break
 		}
@@ -58,8 +58,8 @@ func (ctx *parseContext) Visit(node ast.Node) ast.Visitor {
 				continue
 			}
 			ctx.result.ErrorCodeLocations = append(ctx.result.ErrorCodeLocations, &location{
-				StartLine: ifScope.blockStartLine,
-				EndLine:   ifScope.blockEndLine,
+				Start: ifScope.start,
+				End:   ifScope.end,
 			})
 			break
 		}

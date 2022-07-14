@@ -14,8 +14,13 @@ const (
 )
 
 type location struct {
-	StartLine int `json:"startLine"`
-	EndLine   int `json:"endLine"`
+	Start *position `json:"start"`
+	End   *position `json:"end"`
+}
+
+type position struct {
+	Line   int `json:"line"`
+	Column int `json:"column"`
 }
 
 func newParseResult() *parseResult {
