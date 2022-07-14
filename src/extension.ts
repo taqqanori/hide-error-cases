@@ -3,7 +3,6 @@
 import * as vscode from "vscode";
 import * as child_process from "child_process";
 import path = require("path");
-import { stderr } from "process";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -13,11 +12,8 @@ export function activate(context: vscode.ExtensionContext) {
   // The commandId parameter must match the command field in package.json
   let disposable = vscode.commands.registerCommand(
     "hide-error-cases.foldErrorCases",
-    async () => {
-      const parseResult = await parse(context);
-      // The code you place here will be executed every time your command is executed
-      // Display a message box to the user
-      vscode.window.showInformationMessage("foldErrorCases");
+    () => {
+      fold(context, true);
     }
   );
   context.subscriptions.push(disposable);
@@ -35,6 +31,35 @@ export function activate(context: vscode.ExtensionContext) {
 // this method is called when your extension is deactivated
 export function deactivate() {}
 
+async function fold(
+  context: vscode.ExtensionContext,
+  showErrorInMessageBox: boolean
+) {
+  const parseResult = await parse(context);
+  if (parseResult.status === "failure") {
+    error(
+      `Failed to parse .go file ${
+        parseResult.failureMessage
+          ? `(detail:${parseResult.failureMessage}})`
+          : ""
+      }.`,
+      showErrorInMessageBox
+    );
+    return;
+  }
+  const selectionLines = parseResult.errorCodeLocations.reduce<number[]>(
+    (lines, location) => {
+      lines.push(location.startLine);
+      return lines;
+    },
+    []
+  );
+  vscode.commands.executeCommand("editor.fold", {
+    level: 1,
+    selectionLines,
+  });
+}
+
 interface ParseResult {
   status: "success" | "failure";
   failureMessage?: string;
@@ -44,7 +69,7 @@ interface ParseResult {
   }[];
 }
 
-// never rejected, parse result is know by status
+// never rejected, parse result is known by status
 function parse(context: vscode.ExtensionContext): Promise<ParseResult> {
   return new Promise((resolve) => {
     const src = vscode.window.activeTextEditor?.document.getText();
@@ -76,4 +101,13 @@ function errorResult(msg?: string): ParseResult {
     failureMessage: msg,
     errorCodeLocations: [],
   };
+}
+
+function error(msg: string, showInMessageBox = false) {
+  const header = "Hide Error Cases: ";
+  if (showInMessageBox) {
+    vscode.window.showErrorMessage(header + msg);
+  } else {
+    console.error(header + msg);
+  }
 }
