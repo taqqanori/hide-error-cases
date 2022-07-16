@@ -1,5 +1,20 @@
 import * as vscode from "vscode";
 
+export function checkGoFileOpened(showErrorInMessageBox: boolean): boolean {
+  const ret = isGoFileOpened();
+  if (!ret) {
+    error(
+      ".go file not opened in current active text editor.",
+      showErrorInMessageBox
+    );
+  }
+  return ret;
+}
+
+export function isGoFileOpened(): boolean {
+  return vscode.window.activeTextEditor?.document.languageId === "go";
+}
+
 export function parseError(failureMessage?: string, showInMessageBox = false) {
   error(
     `Failed to parse .go file ${

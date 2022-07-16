@@ -1,15 +1,20 @@
 import * as vscode from "vscode";
 import { parse, ParseResult } from "./parse";
-import { error, parseError } from "./util";
+import { error, checkGoFileOpened, parseError } from "./util";
 
 const decorations: vscode.TextEditorDecorationType[] = [];
 
 export async function makeTransparent(
   context: vscode.ExtensionContext,
-  opacity: number,
   showErrorInMessageBox: boolean,
   parseResult?: ParseResult
 ) {
+  if (!checkGoFileOpened(showErrorInMessageBox)) {
+    return;
+  }
+  const opacity = vscode.workspace
+    .getConfiguration("go")
+    .get("hideErrorCases.errorCasesOpacity", 0.5);
   if (!parseResult) {
     parseResult = await parse(context);
     if (parseResult.status === "failure") {

@@ -32,7 +32,27 @@
 				"command": "hide-error-cases.resetErrorCasesTransparency",
 				"title": "Reset Error Cases Transparency"
 			}
-		]
+		],
+		"configuration": {
+			"title": "Hide Error Cases (Go)",
+			"properties": {
+				"go.hideErrorCases.autoFold": {
+					"type": "boolean",
+					"default": false,
+					"description": "Automatically fold error case codes on opening .go files by text editor."
+				},
+				"go.hideErrorCases.autoMakeTransparent": {
+					"type": "boolean",
+					"default": true,
+					"description": "Automatically make error case codes transparent on opening .go files by text editor."
+				},
+				"go.hideErrorCases.errorCasesOpacity": {
+					"type": "number",
+					"default": 0.5,
+					"description": "The opacity of error case codes."
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "yarn run compile",

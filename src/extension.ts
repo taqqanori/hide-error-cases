@@ -1,8 +1,10 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
+import { parse } from "./parse";
 import { fold } from "./fold";
 import { makeTransparent, resetTransparency } from "./transparent";
+import { isGoFileOpened } from "./util";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -24,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
   disposable = vscode.commands.registerCommand(
     "hide-error-cases.makeErrorCasesTransparent",
     () => {
-      makeTransparent(context, 0.5, true);
+      makeTransparent(context, true);
     }
   );
   context.subscriptions.push(disposable);
@@ -37,6 +39,53 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
   context.subscriptions.push(disposable);
+
+  // setup listeners enabled by config
+  setupConfigurables(context);
+  vscode.workspace.onDidChangeConfiguration((event) => {
+    setupConfigurables(context);
+  });
+
+  // perform auto fold/make-transparent
+  autoFoldAndMakeTransparent(context);
+}
+
+let configurableDisposable: vscode.Disposable | undefined;
+function setupConfigurables(context: vscode.ExtensionContext) {
+  configurableDisposable?.dispose();
+  if (autoFoldEnabled() || autoTransparentEnabled()) {
+    configurableDisposable = vscode.window.onDidChangeActiveTextEditor(
+      async () => {
+        autoFoldAndMakeTransparent(context);
+      }
+    );
+    context.subscriptions.push(configurableDisposable);
+  }
+}
+
+async function autoFoldAndMakeTransparent(context: vscode.ExtensionContext) {
+  if (!isGoFileOpened() || (!autoFoldEnabled() && !autoTransparentEnabled())) {
+    return;
+  }
+  const parseResult = await parse(context);
+  if (autoFoldEnabled()) {
+    fold(context, false, parseResult);
+  }
+  if (autoTransparentEnabled()) {
+    makeTransparent(context, false, parseResult);
+  }
+}
+
+function autoFoldEnabled(): boolean {
+  return vscode.workspace
+    .getConfiguration("go")
+    .get("hideErrorCases.autoFold", false);
+}
+
+function autoTransparentEnabled(): boolean {
+  return vscode.workspace
+    .getConfiguration("go")
+    .get("hideErrorCases.autoMakeTransparent", true);
 }
 
 // this method is called when your extension is deactivated

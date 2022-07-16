@@ -1,12 +1,15 @@
 import * as vscode from "vscode";
 import { parse, ParseResult } from "./parse";
-import { parseError } from "./util";
+import { checkGoFileOpened, parseError } from "./util";
 
 export async function fold(
   context: vscode.ExtensionContext,
   showErrorInMessageBox: boolean,
   parseResult?: ParseResult
 ) {
+  if (!checkGoFileOpened(showErrorInMessageBox)) {
+    return;
+  }
   if (!parseResult) {
     parseResult = await parse(context);
     if (parseResult.status === "failure") {
@@ -24,5 +27,6 @@ export async function fold(
   vscode.commands.executeCommand("editor.fold", {
     level: 1,
     selectionLines,
+    direction: "down",
   });
 }
