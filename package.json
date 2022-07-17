@@ -3,7 +3,7 @@
 	"displayName": "hide-error-cases",
 	"description": "Hides error case codes of .go file.",
 	"version": "0.0.1",
-	"icon": "image/hiding-gopher.png",
+	"icon": "images/hiding-gopher.png",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/taqqanori/hide-error-cases.git"
