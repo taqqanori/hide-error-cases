@@ -1,5 +1,6 @@
 {
 	"name": "hide-error-cases",
+	"publisher": "taqanori",
 	"displayName": "hide-error-cases",
 	"description": "Hides error case codes of .go file.",
 	"version": "1.0.0",
@@ -12,6 +13,7 @@
 		"vscode": "^1.68.0"
 	},
 	"categories": [
+		"Programming Languages",
 		"Other"
 	],
 	"activationEvents": [
