@@ -2,7 +2,7 @@
 	"name": "hide-error-cases",
 	"displayName": "hide-error-cases",
 	"description": "Hides error case codes of .go file.",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"icon": "images/hiding-gopher.png",
 	"repository": {
 		"type": "git",
