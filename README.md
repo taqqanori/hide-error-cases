@@ -20,7 +20,8 @@ You can automatically make error case codes transparent everytime you open .go f
 
 ## Requirements
 
-`go` command is available on `PATH`.
+- `go` command is available on `PATH`.
+- `go` language extension is installed in VSCode.
 
 ## Extension Settings
 
