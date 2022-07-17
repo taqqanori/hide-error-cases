@@ -1,9 +1,9 @@
 {
 	"name": "hide-error-cases",
 	"publisher": "taqanori",
-	"displayName": "hide-error-cases",
+	"displayName": "Hide Error Cases",
 	"description": "Hides error case codes of .go file.",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"icon": "images/hiding-gopher.png",
 	"repository": {
 		"type": "git",
