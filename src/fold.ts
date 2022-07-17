@@ -17,6 +17,9 @@ export async function fold(
       return;
     }
   }
+  if (parseResult.errorCodeLocations.length === 0) {
+    return;
+  }
   const selectionLines = parseResult.errorCodeLocations.reduce<number[]>(
     (lines, location) => {
       lines.push(location.start.line);

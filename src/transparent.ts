@@ -26,6 +26,9 @@ export async function makeTransparent(
     error("There are no active text editor.", showErrorInMessageBox);
     return;
   }
+  if (parseResult.errorCodeLocations.length === 0) {
+    return;
+  }
   const decoration = vscode.window.createTextEditorDecorationType({
     opacity: opacity.toString(),
   });
