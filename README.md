@@ -1,6 +1,6 @@
 # Hide Error Cases (for Go)
 
-When you read Go codes, you may want to consentrate on normal cases rather than error cases.
+When you read Go codes, you may want to concentrate on normal cases rather than error cases.
 This extension may help you in such situation, by folding error case codes or/and making error case codes transparent.
 
 ![Hide Error Cases Screenshot](images/screen-shot.png)
