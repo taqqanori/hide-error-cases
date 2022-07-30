@@ -3,14 +3,16 @@ package main
 import (
 	"go/ast"
 	"go/token"
+	"regexp"
 )
 
 type parseContext struct {
-	fileSet        *token.FileSet
-	result         *parseResult
-	currentDepth   int
-	funcScopeStack *scopeStack
-	ifScopeStack   *scopeStack
+	fileSet         *token.FileSet
+	result          *parseResult
+	errorTypeRegexp *regexp.Regexp
+	currentDepth    int
+	funcScopeStack  *scopeStack
+	ifScopeStack    *scopeStack
 }
 
 func (ctx *parseContext) Visit(node ast.Node) ast.Visitor {
@@ -26,9 +28,9 @@ func (ctx *parseContext) Visit(node ast.Node) ast.Visitor {
 	ctx.currentDepth++
 	switch castedNode := node.(type) {
 	case *ast.FuncDecl:
-		ctx.funcScopeStack.push(newFromFuncDecl(ctx.currentDepth, castedNode))
+		ctx.funcScopeStack.push(newFromFuncDecl(ctx.currentDepth, castedNode, ctx.errorTypeRegexp))
 	case *ast.FuncLit:
-		ctx.funcScopeStack.push(newFromFuncLit(ctx.currentDepth, castedNode))
+		ctx.funcScopeStack.push(newFromFuncLit(ctx.currentDepth, castedNode, ctx.errorTypeRegexp))
 	case *ast.IfStmt:
 		ctx.ifScopeStack.push(newFromIfStmt(ctx.fileSet, ctx.currentDepth, castedNode))
 	case *ast.ReturnStmt:
@@ -67,12 +69,13 @@ func (ctx *parseContext) Visit(node ast.Node) ast.Visitor {
 	return ctx
 }
 
-func newParseContext(fset *token.FileSet, result *parseResult) *parseContext {
+func newParseContext(fset *token.FileSet, result *parseResult, errorTypeRegexp *regexp.Regexp) *parseContext {
 	return &parseContext{
-		fileSet:        fset,
-		result:         result,
-		currentDepth:   0,
-		funcScopeStack: &scopeStack{},
-		ifScopeStack:   &scopeStack{},
+		fileSet:         fset,
+		result:          result,
+		errorTypeRegexp: errorTypeRegexp,
+		currentDepth:    0,
+		funcScopeStack:  &scopeStack{},
+		ifScopeStack:    &scopeStack{},
 	}
 }

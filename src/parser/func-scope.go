@@ -1,6 +1,9 @@
 package main
 
-import "go/ast"
+import (
+	"go/ast"
+	"regexp"
+)
 
 type funcScope struct {
 	depth                  int
@@ -11,15 +14,15 @@ func (fc *funcScope) getDepth() int {
 	return fc.depth
 }
 
-func newFromFuncDecl(depth int, decl *ast.FuncDecl) *funcScope {
-	return newFromFuncType(depth, decl.Type)
+func newFromFuncDecl(depth int, decl *ast.FuncDecl, errorTypeRegexp *regexp.Regexp) *funcScope {
+	return newFromFuncType(depth, decl.Type, errorTypeRegexp)
 }
 
-func newFromFuncLit(depth int, lit *ast.FuncLit) *funcScope {
-	return newFromFuncType(depth, lit.Type)
+func newFromFuncLit(depth int, lit *ast.FuncLit, errorTypeRegexp *regexp.Regexp) *funcScope {
+	return newFromFuncType(depth, lit.Type, errorTypeRegexp)
 }
 
-func newFromFuncType(depth int, funcType *ast.FuncType) *funcScope {
+func newFromFuncType(depth int, funcType *ast.FuncType, errorTypeRegexp *regexp.Regexp) *funcScope {
 	ret := &funcScope{
 		depth:                  depth,
 		errorReturnTypeIndices: []int{},
@@ -28,7 +31,7 @@ func newFromFuncType(depth int, funcType *ast.FuncType) *funcScope {
 		return ret
 	}
 	for i := 0; i < len(funcType.Results.List); i++ {
-		if exprToIdentName(funcType.Results.List[i].Type) == "error" {
+		if errorTypeRegexp.MatchString(exprToIdentName(funcType.Results.List[i].Type)) {
 			ret.errorReturnTypeIndices = append(ret.errorReturnTypeIndices, i)
 		}
 	}

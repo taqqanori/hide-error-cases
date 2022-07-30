@@ -8,14 +8,23 @@ import (
 	"go/token"
 	"io/ioutil"
 	"os"
+	"regexp"
 )
+
+const defaultErrotTypeRegexp = "(E|e)rror$"
 
 func main() {
 	src, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
 		errorOut("faild to read stdin.")
 	}
-	json, err := json.Marshal(parse(string(src)))
+
+	errorTypeRegexpStr := defaultErrotTypeRegexp
+	if 1 < len(os.Args) {
+		errorTypeRegexpStr = os.Args[1]
+	}
+
+	json, err := json.Marshal(parse(string(src), errorTypeRegexpStr))
 	if err != nil {
 		errorOut("failed in json marshaling.")
 		return
@@ -27,7 +36,7 @@ func errorOut(msg string) {
 	fmt.Printf(`{status:"failure",failureMessage:"%s"}`, msg)
 }
 
-func parse(src string) *parseResult {
+func parse(src string, errorTypeRegexpStr string) *parseResult {
 	ret := newParseResult()
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, "", src, 0)
@@ -37,7 +46,12 @@ func parse(src string) *parseResult {
 		return ret
 	}
 
-	ctx := newParseContext(fset, ret)
+	errorTypeRegexp, err := regexp.Compile(errorTypeRegexpStr)
+	if err != nil {
+		errorTypeRegexp = regexp.MustCompile(defaultErrotTypeRegexp)
+	}
+
+	ctx := newParseContext(fset, ret, errorTypeRegexp)
 	ast.Walk(ctx, f)
 
 	return ret

@@ -5,6 +5,12 @@ This extension may help you in such situation, by folding error case codes or/an
 
 ![Hide Error Cases Screenshot](images/screen-shot.png)
 
+This extension recognizes codes fulfilling followings as error case codes.
+
+- An if block
+- Ending with return statement
+- Returning a object which is not static `nil` as a type that matches regexp defined in `go.hideErrorCases.errorTypeRegexp`
+
 ## Features
 
 ### Fold Error Cases
@@ -30,7 +36,16 @@ This extension contributes the following settings:
 - `go.hideErrorCases.autoFold`: enable/disable auto-fold feature
 - `go.hideErrorCases.autoMakeTransparent`: enable/disable auto-make-transparent feature
 - `go.hideErrorCases.errorCasesOpacity`: configures opacity of error case codes
+- `go.hideErrorCases.errorTypeRegexp`: configures which type should be recognized as error type
 
 ### 1.0.0
 
 Initial release of Hide Error Cases
+
+### 1.0.1~1.0.2
+
+Just brushed up README, no functionality change.
+
+### 1.0.3
+
+Introduced `go.hideErrorCases.errorTypeRegexp` setting, for working with any custom error types.
