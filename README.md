@@ -49,3 +49,7 @@ Just brushed up README, no functionality change.
 ### 1.0.3
 
 Introduced `go.hideErrorCases.errorTypeRegexp` setting, for working with any custom error types.
+
+### 1.0.4
+
+Bug fix: could not recognize types with selector (like `somepackage.MyError`) as error types.

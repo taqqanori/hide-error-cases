@@ -10,5 +10,8 @@ func exprToIdentName(expr ast.Expr) string {
 	if star, ok := expr.(*ast.StarExpr); ok {
 		return exprToIdentName(star.X)
 	}
+	if star, ok := expr.(*ast.SelectorExpr); ok {
+		return exprToIdentName(star.Sel)
+	}
 	return ""
 }

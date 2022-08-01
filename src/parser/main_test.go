@@ -78,6 +78,13 @@ func Test(t *testing.T) {
 		},
 	},
 		"Exception")
+	test(t, "custom-packaged-error-types.go", parseResult{
+		Status: success,
+		ErrorCodeLocations: []*location{
+			loc(7, 2, 9, 2),
+			loc(24, 2, 26, 2),
+		},
+	})
 	parseAndCompare(t, "I am invalid as go code!", parseResult{
 		Status:             failure,
 		FailureMessage:     "Failed to parse file.",
