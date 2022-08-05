@@ -9,6 +9,7 @@ export interface ParseResult {
   errorCodeLocations: {
     start: Position;
     end: Position;
+    blockStartLine: number;
   }[];
 }
 

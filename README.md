@@ -7,7 +7,7 @@ This extension may help you in such situation, by folding error case codes or/an
 
 This extension recognizes codes fulfilling followings as error case codes.
 
-- An if block
+- if, else-if, else blocks
 - Ending with return statement
 - Returning a object which is not static `nil` as a type that matches regexp defined in `go.hideErrorCases.errorTypeRegexp`
 
@@ -53,3 +53,7 @@ Introduced `go.hideErrorCases.errorTypeRegexp` setting, for working with any cus
 ### 1.0.4
 
 Bug fix: could not recognize types with selector (like `somepackage.MyError`) as error types.
+
+### 1.0.5
+
+Bug fix: not working for else-if and else, fails to fold nested if block.

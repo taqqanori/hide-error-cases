@@ -26,6 +26,11 @@ func (ctx *parseContext) Visit(node ast.Node) ast.Visitor {
 		return nil
 	}
 	ctx.currentDepth++
+	if ifs, ok := ctx.ifScopeStack.peek().(*ifScope); ok && ifs.ifStmt != nil && node == ifs.ifStmt.Else {
+		// now came down to "else" ("else" is located under "if" on AST)
+		ctx.ifScopeStack.push(newFromElseStmt(ctx.fileSet, ctx.currentDepth, ifs.ifStmt))
+		return ctx
+	}
 	switch castedNode := node.(type) {
 	case *ast.FuncDecl:
 		ctx.funcScopeStack.push(newFromFuncDecl(ctx.currentDepth, castedNode, ctx.errorTypeRegexp))
@@ -60,8 +65,9 @@ func (ctx *parseContext) Visit(node ast.Node) ast.Visitor {
 				continue
 			}
 			ctx.result.ErrorCodeLocations = append(ctx.result.ErrorCodeLocations, &location{
-				Start: ifScope.start,
-				End:   ifScope.end,
+				Start:          ifScope.start,
+				End:            ifScope.end,
+				BlockStartLine: ifScope.blockStartLine,
 			})
 			break
 		}

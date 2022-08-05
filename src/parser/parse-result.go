@@ -14,8 +14,9 @@ const (
 )
 
 type location struct {
-	Start *position `json:"start"`
-	End   *position `json:"end"`
+	Start          *position `json:"start"`
+	End            *position `json:"end"`
+	BlockStartLine int       `json:"blockStartLine"`
 }
 
 type position struct {

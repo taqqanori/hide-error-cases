@@ -22,13 +22,13 @@ export async function fold(
   }
   const selectionLines = parseResult.errorCodeLocations.reduce<number[]>(
     (lines, location) => {
-      lines.push(location.start.line);
+      lines.push(location.blockStartLine - 1);
       return lines;
     },
     []
   );
   vscode.commands.executeCommand("editor.fold", {
-    level: 1,
+    levels: 1,
     selectionLines,
     direction: "down",
   });
