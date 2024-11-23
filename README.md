@@ -1,7 +1,11 @@
 # Hide Error Cases (for Go)
 
-When you read Go codes, you may want to concentrate on normal cases rather than error cases.
+**Tired of seeing `if err != nil { return err }`? This may help!**
+
+When you read Go codes, you may want to concentrate on normal cases rather than error cases (`if err!= nil { return err }`s).
 This extension may help you in such situation, by folding error case codes or/and making error case codes transparent.
+
+Ideally, this feature should be officially provided by [vscode-go](https://github.com/golang/vscode-go), so, if you like my extension, let's up-vote [this issue (golang/vscode-go#2311)](https://github.com/golang/vscode-go/issues/2311)!
 
 ![Hide Error Cases Screenshot](images/screen-shot.png)
 
@@ -38,22 +42,26 @@ This extension contributes the following settings:
 - `go.hideErrorCases.errorCasesOpacity`: configures opacity of error case codes
 - `go.hideErrorCases.errorTypeRegexp`: configures which type should be recognized as error type
 
-### 1.0.0
+### 1.0.6
 
-Initial release of Hide Error Cases
+Revised README, fix minor bugs.
 
-### 1.0.1~1.0.2
+### 1.0.5
 
-Just brushed up README, no functionality change.
-
-### 1.0.3
-
-Introduced `go.hideErrorCases.errorTypeRegexp` setting, for working with any custom error types.
+Bug fix: not working for else-if and else, fails to fold nested if block.
 
 ### 1.0.4
 
 Bug fix: could not recognize types with selector (like `somepackage.MyError`) as error types.
 
-### 1.0.5
+### 1.0.3
 
-Bug fix: not working for else-if and else, fails to fold nested if block.
+Introduced `go.hideErrorCases.errorTypeRegexp` setting, for working with any custom error types.
+
+### 1.0.1~1.0.2
+
+Just revised README, no functionality change.
+
+### 1.0.0
+
+Initial release of Hide Error Cases

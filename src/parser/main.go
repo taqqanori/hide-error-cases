@@ -17,6 +17,7 @@ func main() {
 	src, err := ioutil.ReadAll(os.Stdin)
 	if err != nil {
 		errorOut("faild to read stdin.")
+		return
 	}
 
 	errorTypeRegexpStr := defaultErrotTypeRegexp
@@ -33,7 +34,7 @@ func main() {
 }
 
 func errorOut(msg string) {
-	fmt.Printf(`{status:"failure",failureMessage:"%s"}`, msg)
+	fmt.Printf(`{"status":"failure","failureMessage":"%s"}`, msg)
 }
 
 func parse(src string, errorTypeRegexpStr string) *parseResult {
