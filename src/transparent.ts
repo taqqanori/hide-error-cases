@@ -1,16 +1,25 @@
 import * as vscode from "vscode";
 import { parse, ParseResult } from "./parse";
-import { error, checkGoFileOpened, parseError } from "./util";
+import {
+  error,
+  checkGoFileOpened,
+  parseError,
+  getCurrentFileName,
+} from "./util";
 
 const decorations: vscode.TextEditorDecorationType[] = [];
 
 export async function makeTransparent(
   context: vscode.ExtensionContext,
   showErrorInMessageBox: boolean,
-  parseResult?: ParseResult
+  parseResult?: ParseResult,
+  targetFileName?: string
 ) {
   if (!checkGoFileOpened(showErrorInMessageBox)) {
     return;
+  }
+  if (!targetFileName) {
+    targetFileName = getCurrentFileName();
   }
   const opacity = vscode.workspace
     .getConfiguration("go")
@@ -33,6 +42,10 @@ export async function makeTransparent(
     opacity: opacity.toString(),
   });
   decorations.push(decoration);
+  if (targetFileName !== getCurrentFileName()) {
+    // opened file has changed, do nothing
+    return;
+  }
   vscode.window.activeTextEditor.setDecorations(
     decoration,
     parseResult.errorCodeLocations.map<vscode.Range>(

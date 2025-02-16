@@ -1,14 +1,18 @@
 import * as vscode from "vscode";
 import { parse, ParseResult } from "./parse";
-import { checkGoFileOpened, parseError } from "./util";
+import { checkGoFileOpened, getCurrentFileName, parseError } from "./util";
 
 export async function fold(
   context: vscode.ExtensionContext,
   showErrorInMessageBox: boolean,
-  parseResult?: ParseResult
+  parseResult?: ParseResult,
+  targetFileName?: string
 ) {
   if (!checkGoFileOpened(showErrorInMessageBox)) {
     return;
+  }
+  if (!targetFileName) {
+    targetFileName = getCurrentFileName();
   }
   if (!parseResult) {
     parseResult = await parse(context);
@@ -27,6 +31,10 @@ export async function fold(
     },
     []
   );
+  if (targetFileName !== getCurrentFileName()) {
+    // opened file has changed, do nothing
+    return;
+  }
   vscode.commands.executeCommand("editor.fold", {
     levels: 1,
     selectionLines,

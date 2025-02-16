@@ -3,7 +3,7 @@
 	"publisher": "taqanori",
 	"displayName": "Hide Error Cases",
 	"description": "Hides error case codes of .go file.",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"icon": "images/hiding-gopher.png",
 	"repository": {
 		"type": "git",
@@ -47,6 +47,11 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Automatically make error case codes transparent on opening .go files by text editor."
+				},
+				"go.hideErrorCases.hideOnSave": {
+					"type": "boolean",
+					"default": false,
+					"description": "Performs auto-fold/auto-make-transparent above also on saving .go files."
 				},
 				"go.hideErrorCases.errorCasesOpacity": {
 					"type": "number",

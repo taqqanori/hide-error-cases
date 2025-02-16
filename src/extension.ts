@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import { parse } from "./parse";
 import { fold } from "./fold";
 import { makeTransparent, resetTransparency } from "./transparent";
-import { isGoFileOpened } from "./util";
+import { getCurrentFileName, isGoFileOpened } from "./util";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -50,16 +50,24 @@ export function activate(context: vscode.ExtensionContext) {
   autoFoldAndMakeTransparent(context);
 }
 
-let configurableDisposable: vscode.Disposable | undefined;
+const configurableDisposables: vscode.Disposable[] = [];
 function setupConfigurables(context: vscode.ExtensionContext) {
-  configurableDisposable?.dispose();
+  configurableDisposables.forEach((c) => c.dispose());
+  configurableDisposables.splice(0);
   if (autoFoldEnabled() || autoTransparentEnabled()) {
-    configurableDisposable = vscode.window.onDidChangeActiveTextEditor(
-      async () => {
+    const autoHide = vscode.window.onDidChangeActiveTextEditor(async () => {
+      autoFoldAndMakeTransparent(context);
+    });
+    configurableDisposables.push(autoHide);
+    context.subscriptions.push(autoHide);
+    if (hideOnSaveEnabled()) {
+      const hideOnSave = vscode.workspace.onDidSaveTextDocument(async () => {
+        resetTransparency();
         autoFoldAndMakeTransparent(context);
-      }
-    );
-    context.subscriptions.push(configurableDisposable);
+      });
+      configurableDisposables.push(hideOnSave);
+      context.subscriptions.push(hideOnSave);
+    }
   }
 }
 
@@ -67,12 +75,13 @@ async function autoFoldAndMakeTransparent(context: vscode.ExtensionContext) {
   if (!isGoFileOpened() || (!autoFoldEnabled() && !autoTransparentEnabled())) {
     return;
   }
+  const targetFileName = getCurrentFileName();
   const parseResult = await parse(context);
   if (autoFoldEnabled()) {
-    fold(context, false, parseResult);
+    fold(context, false, parseResult, targetFileName);
   }
   if (autoTransparentEnabled()) {
-    makeTransparent(context, false, parseResult);
+    makeTransparent(context, false, parseResult, targetFileName);
   }
 }
 
@@ -86,6 +95,12 @@ function autoTransparentEnabled(): boolean {
   return vscode.workspace
     .getConfiguration("go")
     .get("hideErrorCases.autoMakeTransparent", true);
+}
+
+function hideOnSaveEnabled(): boolean {
+  return vscode.workspace
+    .getConfiguration("go")
+    .get("hideErrorCases.hideOnSave", false);
 }
 
 // this method is called when your extension is deactivated

@@ -15,6 +15,10 @@ export function isGoFileOpened(): boolean {
   return vscode.window.activeTextEditor?.document.languageId === "go";
 }
 
+export function getCurrentFileName() {
+  return vscode.window.activeTextEditor?.document.fileName;
+}
+
 export function parseError(failureMessage?: string, showInMessageBox = false) {
   error(
     `Failed to parse .go file ${
