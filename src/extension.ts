@@ -61,8 +61,8 @@ function setupConfigurables(context: vscode.ExtensionContext) {
     configurableDisposables.push(autoHide);
     context.subscriptions.push(autoHide);
     if (hideOnSaveEnabled()) {
-      resetTransparency();
       const hideOnSave = vscode.workspace.onDidSaveTextDocument(async () => {
+        resetTransparency();
         autoFoldAndMakeTransparent(context);
       });
       configurableDisposables.push(hideOnSave);
