@@ -47,6 +47,11 @@ This extension contributes the following settings:
 - `go.hideErrorCases.errorCasesOpacity`: configures opacity of error case codes
 - `go.hideErrorCases.errorTypeRegexp`: configures which type should be recognized as error type
 
+### 1.0.8
+
+Bug fix: folds wrong lines when there are multiple return statements under a if/else block.
+https://github.com/taqqanori/hide-error-cases/issues/6
+
 ### 1.0.7
 
 Added hide-on-save feature

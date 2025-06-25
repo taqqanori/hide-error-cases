@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -49,6 +49,12 @@ func Test(t *testing.T) {
 			loc(14, 2, 16, 2, 14),
 			loc(18, 2, 20, 2, 18),
 			loc(22, 2, 24, 2, 22),
+		},
+	})
+	test(t, "multiple-returns.go", parseResult{
+		Status: success,
+		ErrorCodeLocations: []*location{
+			loc(14, 3, 16, 2, 14),
 		},
 	})
 	test(t, "nested.go", parseResult{
@@ -132,12 +138,12 @@ func loc(startLine int, startColumn int, endLine int, endColumn int, blockStartL
 
 func test(t *testing.T, file string, expected parseResult, errorTypeRegex ...string) {
 	_, self, _, _ := runtime.Caller(0)
-	src, _ := ioutil.ReadFile(filepath.Join(filepath.Dir(self), testInputsDir, file))
+	src, _ := os.ReadFile(filepath.Join(filepath.Dir(self), testInputsDir, file))
 	parseAndCompare(t, string(src), expected, errorTypeRegex...)
 }
 
 func parseAndCompare(t *testing.T, src string, expected parseResult, errorTypeRegexArr ...string) {
-	errorTypeRegex := defaultErrotTypeRegexp
+	errorTypeRegex := defaultErrorTypeRegexp
 	if 0 < len(errorTypeRegexArr) {
 		errorTypeRegex = errorTypeRegexArr[0]
 	}

@@ -7,18 +7,16 @@ import (
 )
 
 type parseContext struct {
-	fileSet         *token.FileSet
-	result          *parseResult
-	errorTypeRegexp *regexp.Regexp
-	currentDepth    int
-	funcScopeStack  *scopeStack
-	ifScopeStack    *scopeStack
+	fileSet           *token.FileSet
+	errorTypeRegexp   *regexp.Regexp
+	currentDepth      int
+	funcScopeStack    *scopeStack
+	ifScopeStack      *scopeStack
+	candidateIfScopes []*ifScope
+	whiteListIfScopes []*ifScope
 }
 
 func (ctx *parseContext) Visit(node ast.Node) ast.Visitor {
-	if ctx.result.Status == failure {
-		return nil
-	}
 	if node == nil {
 		ctx.funcScopeStack.popIfDepthMatch(ctx.currentDepth)
 		ctx.ifScopeStack.popIfDepthMatch(ctx.currentDepth)
@@ -55,33 +53,61 @@ func (ctx *parseContext) Visit(node ast.Node) ast.Visitor {
 			// this if statement is outside of the func
 			break
 		}
+		returningError := false
 		for _, errorReturnTypeIndex := range funcScope.errorReturnTypeIndices {
 			if len(castedNode.Results) <= errorReturnTypeIndex {
 				// return values and function return types does not match
 				continue
 			}
 			if exprToIdentName(castedNode.Results[errorReturnTypeIndex]) == "nil" {
-				// returning nil for error type, not a error case
+				// returning nil for error type
 				continue
 			}
-			ctx.result.ErrorCodeLocations = append(ctx.result.ErrorCodeLocations, &location{
-				Start:          ifScope.start,
-				End:            ifScope.end,
-				BlockStartLine: ifScope.blockStartLine,
-			})
+			// returning something not nil for error type
+			returningError = true
 			break
+		}
+		if returningError {
+			// returning error for at least one error type, add to candidate list
+			ctx.candidateIfScopes = append(ctx.candidateIfScopes, ifScope)
+		} else {
+			// returning nil for all the error types, not a error case, add to white list,
+			// for the case ifScope has multiple return statements
+			// https://github.com/taqqanori/hide-error-cases/issues/6
+			ctx.whiteListIfScopes = append(ctx.whiteListIfScopes, ifScope)
 		}
 	}
 	return ctx
 }
 
-func newParseContext(fset *token.FileSet, result *parseResult, errorTypeRegexp *regexp.Regexp) *parseContext {
+func (ctx *parseContext) Result() *parseResult {
+	ret := newParseResult()
+	for _, ifScope := range ctx.candidateIfScopes {
+		whiteListed := false
+		for _, white := range ctx.whiteListIfScopes {
+			if ifScope == white {
+				whiteListed = true
+			}
+		}
+		if !whiteListed {
+			ret.ErrorCodeLocations = append(ret.ErrorCodeLocations, &location{
+				Start:          ifScope.start,
+				End:            ifScope.end,
+				BlockStartLine: ifScope.blockStartLine,
+			})
+		}
+	}
+	return ret
+}
+
+func newParseContext(fset *token.FileSet, errorTypeRegexp *regexp.Regexp) *parseContext {
 	return &parseContext{
-		fileSet:         fset,
-		result:          result,
-		errorTypeRegexp: errorTypeRegexp,
-		currentDepth:    0,
-		funcScopeStack:  &scopeStack{},
-		ifScopeStack:    &scopeStack{},
+		fileSet:           fset,
+		errorTypeRegexp:   errorTypeRegexp,
+		currentDepth:      0,
+		funcScopeStack:    &scopeStack{},
+		ifScopeStack:      &scopeStack{},
+		candidateIfScopes: []*ifScope{},
+		whiteListIfScopes: []*ifScope{},
 	}
 }
