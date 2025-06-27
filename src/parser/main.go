@@ -6,28 +6,28 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
-	"io/ioutil"
+	"io"
 	"os"
 	"regexp"
 )
 
-const defaultErrotTypeRegexp = "(E|e)rror$"
+const defaultErrorTypeRegexp = "(E|e)rror$"
 
 func main() {
-	src, err := ioutil.ReadAll(os.Stdin)
+	src, err := io.ReadAll(os.Stdin)
 	if err != nil {
-		errorOut("faild to read stdin.")
+		errorOut("Failed to read stdin.")
 		return
 	}
 
-	errorTypeRegexpStr := defaultErrotTypeRegexp
+	errorTypeRegexpStr := defaultErrorTypeRegexp
 	if 1 < len(os.Args) {
 		errorTypeRegexpStr = os.Args[1]
 	}
 
 	json, err := json.Marshal(parse(string(src), errorTypeRegexpStr))
 	if err != nil {
-		errorOut("failed in json marshaling.")
+		errorOut("Failed in json marshaling.")
 		return
 	}
 	fmt.Print(string(json))
@@ -38,10 +38,10 @@ func errorOut(msg string) {
 }
 
 func parse(src string, errorTypeRegexpStr string) *parseResult {
-	ret := newParseResult()
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, "", src, 0)
 	if err != nil {
+		ret := newParseResult()
 		ret.Status = failure
 		ret.FailureMessage = "Failed to parse file."
 		return ret
@@ -49,11 +49,12 @@ func parse(src string, errorTypeRegexpStr string) *parseResult {
 
 	errorTypeRegexp, err := regexp.Compile(errorTypeRegexpStr)
 	if err != nil {
-		errorTypeRegexp = regexp.MustCompile(defaultErrotTypeRegexp)
+		errorTypeRegexp = regexp.MustCompile(defaultErrorTypeRegexp)
 	}
 
-	ctx := newParseContext(fset, ret, errorTypeRegexp)
+	ctx := newParseContext(fset, errorTypeRegexp)
 	ast.Walk(ctx, f)
+	ret := ctx.Result()
 
 	return ret
 }
