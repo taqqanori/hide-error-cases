@@ -49,6 +49,9 @@ This extension contributes the following settings:
 
 ### 1.0.8
 
+Bug fix: fails to fold error cases returning errors using named return values.
+https://github.com/taqqanori/hide-error-cases/issues/5
+
 Bug fix: folds wrong lines when there are multiple return statements under a if/else block.
 https://github.com/taqqanori/hide-error-cases/issues/6
 

@@ -54,18 +54,25 @@ func (ctx *parseContext) Visit(node ast.Node) ast.Visitor {
 			break
 		}
 		returningError := false
-		for _, errorReturnTypeIndex := range funcScope.errorReturnTypeIndices {
-			if len(castedNode.Results) <= errorReturnTypeIndex {
-				// return values and function return types does not match
-				continue
+		if len(castedNode.Results) == 0 && 0 < len(funcScope.errorReturnTypes) {
+			// named return values and return statement without arguments case
+			// http://go.dev/tour/basics/7
+			// https://github.com/taqqanori/hide-error-cases/issues/5
+			returningError = isErrorCaseCond(ifScope.ifStmt.Cond, funcScope.errorReturnTypes)
+		} else {
+			for _, errorReturnType := range funcScope.errorReturnTypes {
+				if len(castedNode.Results) <= errorReturnType.index {
+					// return values and function return types does not match
+					continue
+				}
+				if exprToIdentName(castedNode.Results[errorReturnType.index]) == "nil" {
+					// returning nil for error type
+					continue
+				}
+				// returning something not nil for error type
+				returningError = true
+				break
 			}
-			if exprToIdentName(castedNode.Results[errorReturnTypeIndex]) == "nil" {
-				// returning nil for error type
-				continue
-			}
-			// returning something not nil for error type
-			returningError = true
-			break
 		}
 		if returningError {
 			// returning error for at least one error type, add to candidate list
@@ -98,6 +105,31 @@ func (ctx *parseContext) Result() *parseResult {
 		}
 	}
 	return ret
+}
+
+func isErrorCaseCond(expr ast.Expr, errorReturnTypes []*errorReturnType) bool {
+	if parenExpr, ok := expr.(*ast.ParenExpr); ok {
+		// ( X )
+		return isErrorCaseCond(parenExpr.X, errorReturnTypes)
+	}
+	if binaryExpr, ok := expr.(*ast.BinaryExpr); ok {
+		switch binaryExpr.Op {
+		case token.LAND:
+			return isErrorCaseCond(binaryExpr.X, errorReturnTypes) || isErrorCaseCond(binaryExpr.Y, errorReturnTypes)
+		case token.LOR:
+			return isErrorCaseCond(binaryExpr.X, errorReturnTypes) && isErrorCaseCond(binaryExpr.Y, errorReturnTypes)
+		case token.NEQ:
+			for _, errorReturnType := range errorReturnTypes {
+				if exprToIdentName(binaryExpr.X) == errorReturnType.name && exprToIdentName(binaryExpr.Y) == "nil" {
+					return true
+				}
+				if exprToIdentName(binaryExpr.Y) == errorReturnType.name && exprToIdentName(binaryExpr.X) == "nil" {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }
 
 func newParseContext(fset *token.FileSet, errorTypeRegexp *regexp.Regexp) *parseContext {

@@ -3,7 +3,7 @@ package testinputs
 import "os"
 
 // https://github.com/taqqanori/hide-error-cases/issues/6
-func Func() (*os.File, error) {
+func MultipleReturns() (*os.File, error) {
 	if file, err := os.Open("data.txt"); err == nil {
 		switch err = file.Chmod(os.ModeAppend); err {
 		default:

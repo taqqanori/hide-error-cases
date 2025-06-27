@@ -27,12 +27,30 @@ func Test(t *testing.T) {
 			loc(17, 3, 19, 3, 17),
 		},
 	})
-	test(t, "named-return-types.go", parseResult{
+	test(t, "named-return-values.go", parseResult{
 		Status: success,
 		ErrorCodeLocations: []*location{
 			loc(7, 2, 9, 2, 7),
 			loc(14, 3, 16, 3, 14),
 			loc(23, 3, 25, 3, 23),
+			loc(35, 2, 37, 2, 35),
+			loc(49, 2, 51, 2, 49),
+			loc(53, 2, 55, 2, 53),
+			loc(57, 2, 59, 2, 57),
+			loc(65, 2, 67, 2, 65),
+			loc(80, 2, 82, 2, 80),
+			loc(84, 2, 86, 2, 84),
+			loc(88, 2, 90, 2, 88),
+			loc(92, 2, 94, 2, 92),
+			loc(96, 2, 98, 2, 96),
+			loc(104, 2, 106, 2, 104),
+			loc(120, 2, 122, 2, 120),
+			loc(124, 2, 126, 2, 124),
+			loc(136, 2, 138, 2, 136),
+			loc(152, 2, 154, 2, 152),
+			loc(160, 2, 162, 2, 160),
+			loc(168, 2, 170, 2, 168),
+			loc(172, 2, 174, 2, 172),
 		},
 	})
 	test(t, "loop.go", parseResult{
