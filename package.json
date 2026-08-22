@@ -10,7 +10,7 @@
 		"url": "https://github.com/taqqanori/hide-error-cases.git"
 	},
 	"engines": {
-		"vscode": "^1.68.0"
+		"vscode": "^1.100.0"
 	},
 	"categories": [
 		"Programming Languages",
