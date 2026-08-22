@@ -88,6 +88,6 @@
 		"typescript": "^4.7.4"
 	},
 	"dependencies": {
-		"shescape": "^1.5.9"
+		"shescape": "^3.0.2"
 	}
 }
