@@ -47,6 +47,10 @@ This extension contributes the following settings:
 - `go.hideErrorCases.errorCasesOpacity`: configures opacity of error case codes
 - `go.hideErrorCases.errorTypeRegexp`: configures which type should be recognized as error type
 
+### 1.0.9
+
+Updated vulnerable packages, no functionality change.
+
 ### 1.0.8
 
 Bug fix: fails to fold error cases returning errors using named return values.
