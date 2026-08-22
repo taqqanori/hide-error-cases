@@ -62,7 +62,7 @@ function quote(s: string) {
   } else {
     // No shell is preferred because it's safer.
     const shescape = new Shescape({ shell: false });
-    shescape.escape(s);
+    return shescape.escape(s);
   }
 }
 
