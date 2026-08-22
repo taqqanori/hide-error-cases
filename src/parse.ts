@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import * as child_process from "child_process";
+import * as childProcess from "child_process";
 import path = require("path");
 import { Shescape } from "shescape";
 import * as os from "node:os";
@@ -31,7 +31,7 @@ export function parse(context: vscode.ExtensionContext): Promise<ParseResult> {
       .getConfiguration("go")
       .get("hideErrorCases.errorTypeRegexp", "(E|e)rror");
     const parserDir = context.asAbsolutePath(path.join("out", "parser"));
-    const childStdin = child_process.exec(
+    const childStdin = childProcess.exec(
       `go run . ${quote(errorTypeRegexp)}`,
       { cwd: parserDir },
       (error, stdout, stderr) => {
