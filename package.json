@@ -3,14 +3,14 @@
 	"publisher": "taqanori",
 	"displayName": "Hide Error Cases",
 	"description": "Hides error case codes of .go file.",
-	"version": "1.0.8",
+	"version": "1.0.9",
 	"icon": "images/hiding-gopher.png",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/taqqanori/hide-error-cases.git"
 	},
 	"engines": {
-		"vscode": "^1.68.0"
+		"vscode": "^1.100.0"
 	},
 	"categories": [
 		"Programming Languages",
@@ -71,23 +71,17 @@
 		"compile": "tsc -p ./ && cp -rf src/parser out/ && rm -rf out/parser/test-inputs out/parser/main_test.go",
 		"watch": "tsc -watch -p ./",
 		"pretest": "yarn run compile && yarn run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
+		"lint": "eslint src --ext ts"
 	},
 	"devDependencies": {
-		"@types/glob": "^7.2.0",
-		"@types/mocha": "^9.1.1",
 		"@types/node": "16.x",
 		"@types/vscode": "^1.68.0",
-		"@typescript-eslint/eslint-plugin": "^5.30.0",
-		"@typescript-eslint/parser": "^5.30.0",
-		"@vscode/test-electron": "^2.1.5",
-		"eslint": "^8.18.0",
-		"glob": "^8.0.3",
-		"mocha": "^10.0.0",
+		"@typescript-eslint/eslint-plugin": "^8.67.0",
+		"@typescript-eslint/parser": "^8.67.0",
+		"eslint": "^10.9.0",
 		"typescript": "^4.7.4"
 	},
 	"dependencies": {
-		"shescape": "^1.5.9"
+		"shescape": "^3.0.2"
 	}
 }

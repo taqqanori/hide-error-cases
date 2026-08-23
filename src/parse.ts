@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
-import * as child_process from "child_process";
+import * as childProcess from "child_process";
 import path = require("path");
-import { quote } from "shescape";
+import { Shescape } from "shescape";
+import * as os from "node:os";
 
 export interface ParseResult {
   status: "success" | "failure";
@@ -26,23 +27,15 @@ export function parse(context: vscode.ExtensionContext): Promise<ParseResult> {
       return;
     }
     const src = vscode.window.activeTextEditor.document.getText();
-    const errorTypeRegexp = vscode.workspace
-      .getConfiguration("go")
-      .get("hideErrorCases.errorTypeRegexp", "(E|e)rror");
-    const parserDir = context.asAbsolutePath(path.join("out", "parser"));
-    const childStdin = child_process.exec(
-      `go run . ${quote(errorTypeRegexp)}`,
-      { cwd: parserDir },
-      (error, stdout, stderr) => {
-        if (error || stderr) {
-          resolve(
-            errorResult(error ? error.message : stderr ? stderr : undefined)
-          );
-          return;
-        }
-        resolve(JSON.parse(stdout) as ParseResult);
+    const childStdin = exec(context, (error, stdout, stderr) => {
+      if (error || stderr) {
+        resolve(
+          errorResult(error ? error.message : stderr ? stderr : undefined),
+        );
+        return;
       }
-    ).stdin;
+      resolve(JSON.parse(stdout) as ParseResult);
+    }).stdin;
     if (!childStdin) {
       resolve(errorResult("could not get stdin of child process"));
       return;
@@ -50,6 +43,35 @@ export function parse(context: vscode.ExtensionContext): Promise<ParseResult> {
     childStdin.write(src);
     childStdin.end();
   });
+}
+
+// https://github.com/ericcornelissen/shescape/blob/HEAD/docs/use-cases.md
+function exec(
+  context: vscode.ExtensionContext,
+  callback: (error: Error | null, stdout: string, stderr: string) => void,
+) {
+  const errorTypeRegexp = vscode.workspace
+    .getConfiguration("go")
+    .get("hideErrorCases.errorTypeRegexp", "(E|e)rror");
+  const parserDir = context.asAbsolutePath(path.join("out", "parser"));
+  if (os.platform() === "win32") {
+    // A shell is required on Windows to run scripts.
+    const shescape = new Shescape({ shell: true });
+    return childProcess.exec(
+      `go run . ${shescape.quote(errorTypeRegexp)}`,
+      { cwd: parserDir },
+      callback,
+    );
+  } else {
+    // No shell is preferred because it's safer.
+    const shescape = new Shescape({ shell: false });
+    return childProcess.execFile(
+      "go",
+      ["run", ".", shescape.escape(errorTypeRegexp)],
+      { cwd: parserDir },
+      callback,
+    );
+  }
 }
 
 function errorResult(msg?: string): ParseResult {
