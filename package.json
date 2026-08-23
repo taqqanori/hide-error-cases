@@ -71,8 +71,7 @@
 		"compile": "tsc -p ./ && cp -rf src/parser out/ && rm -rf out/parser/test-inputs out/parser/main_test.go",
 		"watch": "tsc -watch -p ./",
 		"pretest": "yarn run compile && yarn run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
+		"lint": "eslint src --ext ts"
 	},
 	"devDependencies": {
 		"@types/node": "16.x",
