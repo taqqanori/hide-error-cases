@@ -68,7 +68,7 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "yarn run compile",
-		"compile": "tsc -p ./ && cp -rf src/parser out/ && rm -rf out/parser/test-inputs out/parser/main_test.go",
+		"compile": "rm -rf out && tsc -p ./ && cp -rf src/parser out/ && rm -rf out/parser/test-inputs out/parser/main_test.go",
 		"watch": "tsc -watch -p ./",
 		"pretest": "yarn run compile && yarn run lint",
 		"lint": "eslint src --ext ts"
